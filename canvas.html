@@ -1,28 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtual Mini Drafter</title>
-  <style>
-    body { display: flex; flex-direction: column; align-items: center; font-family: Arial, sans-serif; }
-    canvas { border: 1px solid #333; margin-top: 20px; }
-    #controls { display: flex; margin-top: 10px; gap: 10px; }
-    button, select { padding: 5px 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Mini Drafter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <script src="drafter.js"> </script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Virtual Mini Drafter</h1>
-  <canvas id="drawingCanvas" width="800" height="600"></canvas>
-  <div id="controls">
-    <label for="pencilType">Pencil: </label>
-    <select id="pencilType">
-      <option value="H">H</option>
-      <option value="2H">2H</option>
-      <option value="3H">3H</option>
-    </select>
-    <button onclick="resetCanvas()">Reset</button>
-  </div>
-  <script src="drafter.js"></script>
+    <canvas id="canvas"></canvas>
+    
 </body>
 </html>
