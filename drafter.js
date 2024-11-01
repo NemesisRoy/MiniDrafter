@@ -1,104 +1,66 @@
-const canvas = document.getElementById('drawingCanvas');
-const ctx = canvas.getContext('2d');
+const fabricCanvas = new fabric.Canvas('canvas');
+fabricCanvas.setWidth(1200); 
+fabricCanvas.setHeight(800); 
 
-// Drafter state
-const drafter = {
-  x: 100, 
-  y: 100,
-  angle: 0,
-  armLength: 100,
-  isDragging: false
-};
 
-// Pencil settings
-const pencils = {
-  H: { width: 1, color: 'black' },
-  '2H': { width: 2, color: '#333' },
-  '3H': { width: 3, color: '#666' }
-};
-let currentPencil = pencils['H'];
+const pencilSelect = document.getElementById('pencil-select');
 
-// Initialize the canvas
-function drawCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawDrafter();
-}
+// Mini Drafter Components
 
-// Draw the drafter with two arms (one fixed, one movable)
-function drawDrafter() {
-  const arm1End = {
-    x: drafter.x + drafter.armLength * Math.cos(drafter.angle),
-    y: drafter.y + drafter.armLength * Math.sin(drafter.angle)
-  };
+// Protractor
 
-  ctx.strokeStyle = 'blue';
-  ctx.lineWidth = 2;
-  
-  // Draw fixed arm
-  ctx.beginPath();
-  ctx.moveTo(drafter.x, drafter.y);
-  ctx.lineTo(arm1End.x, arm1End.y);
-  ctx.stroke();
-
-  // Draw movable arm for angle adjustment
-  ctx.beginPath();
-  ctx.moveTo(arm1End.x, arm1End.y);
-  ctx.lineTo(
-    arm1End.x + drafter.armLength * Math.cos(drafter.angle + Math.PI / 4),
-    arm1End.y + drafter.armLength * Math.sin(drafter.angle + Math.PI / 4)
-  );
-  ctx.stroke();
-}
-
-// Handling Pencil Type Change
-document.getElementById('pencilType').addEventListener('change', (e) => {
-  currentPencil = pencils[e.target.value];
+const protractor = new fabric.Circle({
+    left: 100, // Initial X position
+    top: 100, // Initial Y position
+    radius: 50, // Size of the protractor circle
+    startAngle: Math.PI, // Start angle for half-circle
+    endAngle: 2 * Math.PI, // End angle
+    stroke: 'black', // Border color
+    fill: '', // Transparent fill
+    strokeWidth: 2, // Border thickness
 });
+fabricCanvas.add(protractor);
 
-// Mouse controls for dragging the drafter
-canvas.addEventListener('mousedown', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  const mouseY = e.clientY - rect.top;
+// Scale 
 
-  if (Math.hypot(mouseX - drafter.x, mouseY - drafter.y) < 20) {
-    drafter.isDragging = true;
-  } else {
-    // Start drawing
+const scale = new fabric.Rect({
+    left: 100, // Initial X position
+    top: 150, // Initial Y position
+    width: 200, // Length of the scale
+    height: 10, // Height of the scale
+    fill: 'gray', // Color of the scale
+});
+fabricCanvas.add(scale);
+
+// Make protractor and scale draggable and rotatable
+protractor.set({ selectable: true, hasControls: true, hasBorders: true });
+scale.set({ selectable: true, hasControls: true, hasBorders: true });
+
+// Functionality to handle drawing with different pencil types
+let isDrawing = false;
+let line;
+
+fabricCanvas.on('mouse:down', (options) => {
     isDrawing = true;
-    ctx.strokeStyle = currentPencil.color;
-    ctx.lineWidth = currentPencil.width;
-    ctx.beginPath();
-    ctx.moveTo(mouseX, mouseY);
-  }
+    const pointer = fabricCanvas.getPointer(options.e);
+
+    // Start a new line on mouse down
+    line = new fabric.Line([pointer.x, pointer.y, pointer.x, pointer.y], {
+        stroke: 'black',
+        strokeWidth: parseInt(pencilSelect.value), // Adjust line thickness based on pencil selection
+    });
+    fabricCanvas.add(line);
 });
 
-canvas.addEventListener('mousemove', (e) => {
-  if (drafter.isDragging) {
-    const rect = canvas.getBoundingClientRect();
-    drafter.x = e.clientX - rect.left;
-    drafter.y = e.clientY - rect.top;
-    drawCanvas();
-  } else if (isDrawing) {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+fabricCanvas.on('mouse:move', (options) => {
+    if (!isDrawing) return;
 
-    ctx.lineTo(mouseX, mouseY);
-    ctx.stroke();
-  }
+    // Update the end coordinates of the line as the mouse moves
+    const pointer = fabricCanvas.getPointer(options.e);
+    line.set({ x2: pointer.x, y2: pointer.y });
+    fabricCanvas.renderAll();
 });
 
-canvas.addEventListener('mouseup', () => {
-  drafter.isDragging = false;
-  isDrawing = false;
+fabricCanvas.on('mouse:up', () => {
+    isDrawing = false; // Stop drawing on mouse up
 });
-
-// Reset canvas
-function resetCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawCanvas();
-}
-
-// Initial draw
-drawCanvas();
