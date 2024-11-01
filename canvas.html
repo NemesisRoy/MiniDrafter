@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Mini Drafter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
-    <script src="drafter.js"> </script>
+    <title>Mini Drafter Simulation</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.6.0/fabric.min.js"></script> 
+    <script defer src="drafter.js"></script>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+
     
+    <label for="pencil-select">Select Pencil:</label>
+    <select id="pencil-select">
+        <option value="1">H (Thin)</option>
+        <option value="2">2H (Medium)</option>
+        <option value="3">3H (Thick)</option>
+    </select>
+
+    
+    <canvas id="canvas"></canvas>
+
 </body>
 </html>
